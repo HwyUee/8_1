@@ -14,44 +14,47 @@ public class EmployeeController {
     @Autowired
     public EmployeeRepository employeeRepository;
 
+    /**
+     * 查询所有的Employees
+     * @return
+     */
     @GetMapping
     @ResponseBody
-    List<Employee> findAllEmployee() {
+    List<Employee> findAllEmployees() {
         return employeeRepository.findAll();
     }
 
+    /**
+     * 根据职工id查询Employee
+     * @param id
+     * @return
+     */
     @GetMapping("/{id}")
     @ResponseBody
-    public Optional findById(@PathVariable long id) {
+    public Optional findEmployeeById(@PathVariable long id) {
         return employeeRepository.findById(id);
     }
 
-
+    /**
+     * 分页查询Employees
+     * @param page
+     * @param pageSize
+     * @return
+     */
     @GetMapping("/page/{page}/pageSize/{pageSize}")
     @ResponseBody
     public List<Employee> findByPageAndPageSize(@PathVariable(value = "page") int page, @PathVariable(value = "pageSize") int pageSize) {
         return employeeRepository.findAll(PageRequest.of(page, pageSize)).getContent();
     }
-/*
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public String AddCompany(Company company) {
-        if (employeeRepository.saveAndFlush(company) != null) {
-            return "添加成功";
-        } else {
-            return "添加失败";
-        }
-    }*/
 
     /**
-     * 返回所有的male职工
+     * 返回所有的性别为male的所有职工
      * @return
      */
     @GetMapping("/male")
     @ResponseBody
     public List<Employee>  getMaleEmployees(){
-//        employeeRepository
-     return null;
+        return employeeRepository.findByGender("male");
     }
 
     /**
@@ -90,6 +93,7 @@ public class EmployeeController {
      * @return
      * @throws Exception
      */
+    @ExceptionHandler
     @DeleteMapping("/{id}")
     public String deleteEmployee(@PathVariable Long id) throws Exception{
         long oldCount = employeeRepository.count();
@@ -99,6 +103,5 @@ public class EmployeeController {
         }
         return "删除职工失败";
     }
-
 
 }
