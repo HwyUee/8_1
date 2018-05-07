@@ -21,6 +21,4 @@ public interface CompanyRepository extends JpaRepository<Company, Long> {
     @Modifying
     @Query("UPDATE Company c set c.employeesNumber=?1 where c.id=?2")
     int  UpdateCompanyNumberById (Integer employeesNumber,long id);
-
-
 }

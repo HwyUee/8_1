@@ -5,6 +5,7 @@ import com.example.employee.restfulapi.entity.Employee;
 import com.example.employee.restfulapi.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,22 +45,25 @@ public class CompanyController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public String AddCompany(Company company) {
-        if (companyRepository.save(company) != null) {
-            return company.toString() + "添加成功";
+        if (companyRepository.saveAndFlush(company) != null) {
+            return "添加成功";
         } else {
-            return company.toString() + "添加失败";
+            return "添加失败";
         }
     }
 
     @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.CREATED)
     public String UpdateCompany(@ModelAttribute Company company, @PathVariable long id) {
-        if (companyRepository.findById(id) == null) {
+        if (companyRepository.findById(id).get() == null) {
             throw new Error("The id :" + id + "not exist in table");
         }
         if (company.getCompanyName() != null) {
-            System.out.println("company.getEmployeesNumber()    "+company.getEmployeesNumber());
+            System.out.println("company.getEmployeesNumber()    " + company.getEmployeesNumber());
             if (company.getEmployeesNumber() != null) {
+                //将公司名和员工数量同时更新
                 if (companyRepository.UpdateAllById(company.getCompanyName(), company.getEmployeesNumber(), id) == 1) {
                     return "更新company成功！";
                 }
@@ -79,16 +83,10 @@ public class CompanyController {
     }
 
     @DeleteMapping("/{id}")
-    public String DeleteCompany(long id) {
-        if (companyRepository.findById(id) == null) {
-            throw new Error("The id :" + id + "not exist in table");
-        }
+    @ResponseStatus(HttpStatus.CREATED)
+    public String DeleteCompany(@PathVariable long id) {
         companyRepository.deleteById(id);
-        if (companyRepository.findById(id) == null) {
-            return "删除company成功";
-        }
-        return "删除company失败";
-
+        return "删除company成功";
     }
 }
 
