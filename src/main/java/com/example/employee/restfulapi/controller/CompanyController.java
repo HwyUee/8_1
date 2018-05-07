@@ -44,8 +44,52 @@ public class CompanyController {
     }
 
     @PostMapping
-    public void AddCompany(Company company) {
-        System.out.println(company.getCompanyName());
-        companyRepository.save(company);
+    public String AddCompany(Company company) {
+        if (companyRepository.save(company) != null) {
+            return company.toString() + "添加成功";
+        } else {
+            return company.toString() + "添加失败";
+        }
+    }
+
+    @PutMapping("/{id}")
+    public String UpdateCompany(@ModelAttribute Company company, @PathVariable long id) {
+        if (companyRepository.findById(id) == null) {
+            throw new Error("The id :" + id + "not exist in table");
+        }
+        if (company.getCompanyName() != null) {
+            System.out.println("company.getEmployeesNumber()    "+company.getEmployeesNumber());
+            if (company.getEmployeesNumber() != null) {
+                if (companyRepository.UpdateAllById(company.getCompanyName(), company.getEmployeesNumber(), id) == 1) {
+                    return "更新company成功！";
+                }
+                return "更新company失败";
+            } else {
+                if (companyRepository.UpdateCompanyNameById(company.getCompanyName(), id) == 1) {
+                    return "更新company成功！";
+                }
+                return "更新company失败";
+            }
+        } else {
+            if (companyRepository.UpdateCompanyNumberById(company.getEmployeesNumber(), id) == 1) {
+                return "更新company成功！";
+            }
+            return "更新company失败";
+        }
+    }
+
+    @DeleteMapping("/{id}")
+    public String DeleteCompany(long id) {
+        if (companyRepository.findById(id) == null) {
+            throw new Error("The id :" + id + "not exist in table");
+        }
+        companyRepository.deleteById(id);
+        if (companyRepository.findById(id) == null) {
+            return "删除company成功";
+        }
+        return "删除company失败";
+
     }
 }
+
+
