@@ -77,14 +77,11 @@ public class EmployeeController {
      * @return
      */
     @PutMapping("/{id}")
-    public String updateEmployee(@PathVariable Long id,Employee e){
-        Optional e1 = employeeRepository.findById(id);
-        if (e1 == null){
-            return "该职工不存在";
+    public String updateEmployee(@PathVariable Long id,Employee employee){
+        if (employeeRepository.UpdateEmployee(employee.getName(), employee.getAge(), employee.getGender(), employee.getCompanyId(), employee.getSalary(), id) == 1) {
+            return "数据更新成功";
         }
-
-
-        return  null;
+        return "数据更新失败";
     }
 
     /**
